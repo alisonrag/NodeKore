@@ -24,7 +24,7 @@
  
 2 - Copy the plugin: [NodeKore](https://github.com/alisonrag/NodeKore/blob/main/plugin/NodeKore.pl) to openkore plugins folder  
 3 - Add the plugin to load list in `openkore/control/sys.txt`  
-4 - set `bus 1` and `bus_server_port` in `openkore/control/sys.txt`  
+4 - set `bus 1` and `bus_server_port 1234`in `openkore/control/sys.txt` (bus_server_port [sys.txt] must be equal to SOCKET_PORT[config.json])  
 5 - Open terminal and go to NodeKore root folder  
 6 - Type: `node index.js`  
 
