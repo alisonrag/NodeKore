@@ -81,6 +81,9 @@ module.exports = class App {
 					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_PM', { ID: ID, to: args[2], message: args[3] }));					
 					message.reply(`PM Command Sended Successfully to: ${ID}`);
 					break;
+				case 'dump':
+					that.dumpChannels();
+				break;
 				case 'h':
 					msg = "```Usage: \n !info : Show information about all connected bots. \n !quit <all/username/accountID> : Send Quit command to specific bot, if not defined send to all. \n !relog <all/username/accountID> <time>: Send relog command to specific bot, if not defined send to all. \n !pm <from/all> <to> <message>: Send PM command to bot. \n```";
 					message.reply(msg);
@@ -182,8 +185,7 @@ module.exports = class App {
 		return this.bot_data;
 	}
 
-	sendDiscordMessage(message) {
-		// console.log(this.client.channels.cache); // dump all channels info
+	sendDiscordMessage(message) {		
 		this.client.channels.cache.get(this.channelID).send(message);
 	}
 
@@ -191,6 +193,10 @@ module.exports = class App {
 		this.sockets.forEach((client) => {
 			client.write(message);
 		});
+	}
+	
+	dumpChannels() {
+		console.log(this.client.channels.cache); // dump all channels info
 	}
 }
 
