@@ -24,8 +24,9 @@
  
 2 - Copy the plugin: [NodeKore](https://github.com/alisonrag/NodeKore/blob/main/plugin/NodeKore.pl) to openkore plugins folder  
 3 - Add the plugin to load list in `openkore/control/sys.txt`  
-4 - Open terminal and go to NodeKore root folder  
-5 - Type: `node index.js`  
+4 - set `bus 1` and `bus_server_port` in `openkore/control/sys.txt`  
+5 - Open terminal and go to NodeKore root folder  
+6 - Type: `node index.js`  
 
 ## F.A.Q. (Frequently Asked Questions)
  1. **Where can i get the Channel ID?**
