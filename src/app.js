@@ -81,7 +81,7 @@ module.exports = class App {
 					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_PM', { ID: ID, to: args[2], message: args[3] }));					
 					message.reply(`PM Command Sended Successfully to: ${ID}`);
 					break;
-				case 'dump':
+				case 'channel':
 					message.reply(`Current Channel ID is: ${message.channel.id}`);
 				break;
 				case 'h':
