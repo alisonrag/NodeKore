@@ -9,7 +9,7 @@
 ![Contributors](https://img.shields.io/github/contributors/alisonrag/NodeKore.svg)
 
 # NodeKore
- Openkore and Discord Integration using Node.js
+ Openkore and Discord Integration using [BUS](https://openkore.com/wiki/Bus) and [Node.js](https://nodejs.org/en/)  
 
 ## Prerequisites
 1 - [Openkore](https://github.com/OpenKore/openkore)  
@@ -32,6 +32,9 @@
 ## F.A.Q. (Frequently Asked Questions)
  1. **Where can i get the Channel ID?**
     - use command `!channel` in discord server channel
+
+ 2. **What is BUS?**
+    - [BUS](https://openkore.com/wiki/Bus) is a Openkore system/protocol used to communication between instances
 
 ## Avaliable Commands
 `!info`: Show information about all connected bots.    
