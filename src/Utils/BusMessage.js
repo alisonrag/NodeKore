@@ -1,10 +1,10 @@
 module.exports = class BusMessage {
 	constructor() { }
 
-	serialize (id, args) {
+	serialize(id, args) {
 		let buf = Buffer.alloc(1024);
-	
-		if(typeof args === 'object' && args !== null) {
+
+		if (typeof args === 'object' && args !== null) {
 			// write lenght
 			buf.writeInt32BE(0, 0);
 			// write type
@@ -14,16 +14,16 @@ module.exports = class BusMessage {
 			// write Message ID lenght
 			buf.writeInt8(id_length, 5);
 			let offset = 6 + id_length;
-			
-			for(var key in args) {
+
+			for (var key in args) {
 				// write key and get the lenght
-				 let key_length = buf.write(key, offset + 1);
+				let key_length = buf.write(key, offset + 1);
 				// write the key length
 				buf.writeInt8(key_length, offset);
 				offset = offset + key_length + 1;
 				let type = 1;
 				let value = args[key];
-				if(!isNaN(parseInt((args[key])))) {
+				if (!isNaN(parseInt((args[key])))) {
 					type = 2;
 				}
 				// write value type
@@ -31,32 +31,32 @@ module.exports = class BusMessage {
 				offset++;
 				let value_length = 4;
 				// write value and get the lenght
-				if(!isNaN(parseInt((args[key])))) {
+				if (!isNaN(parseInt((args[key])))) {
 					buf.writeInt32BE(args[key], offset + 3);
 				} else {
 					value_length = buf.write(args[key].toString(), offset + 3);
-				}		
-				
+				}
+
 				// write the value lenght in int24, WTF?!
 				buf[offset] = (value_length & 0xff0000) >>> 16;
 				buf[offset + 1] = (value_length & 0x00ff00) >>> 8;
 				buf[offset + 2] = value_length & 0x0000ff;
-	
-				offset = offset + value_length + 3;			
+
+				offset = offset + value_length + 3;
 			}
-	
+
 			// write lenght
 			buf.writeInt32BE(offset, 0);
-	
+
 			// copy the filled bytes to another buffer 
 			let buffer = new Buffer.alloc(offset);
 			buf.copy(buffer, 0, 0, offset);
-	
+
 			return buffer;
 		} else {
 			return buf;
 		}
-		
+
 	}
 
 	unserialize(data) {
