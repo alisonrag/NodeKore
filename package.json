@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "discord.js": "^12.5.1",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "sprintf-js": "^1.1.2"
   },
   "keywords": [
     "openkore"

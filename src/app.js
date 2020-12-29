@@ -55,12 +55,13 @@ module.exports = class App {
 						return;
 					}
 
-					msg += '```';
-					msg += 'AccountID \t Name \t lvl \t zeny \t location\n';
+					msg += '```\n';
+					let sprintf = require("sprintf-js").sprintf;
+					msg += sprintf('%-10s %-24s %-7s %-10s %-16s\n', 'AccountID', 'Name', 'lvl', 'zeny', 'location');
 					for (let index = 0; index < bot_data_list.length; ++index) {
-						msg += `${bot_data_list[index].accountID} \t ${bot_data_list[index].name} \t ${bot_data_list[index].lv}/${bot_data_list[index].lv_job} \t ${bot_data_list[index].zeny}z \t ${bot_data_list[index].location}\n`;
+						msg += sprintf('%-10s %-24s %-7s %-10s %-16s\n', `${bot_data_list[index].accountID}`, `${bot_data_list[index].name}`, `${bot_data_list[index].lv}/${bot_data_list[index].lv_job}`, `${bot_data_list[index].zeny}z`, `${bot_data_list[index].location}`);
 					}
-					msg += '```';
+					msg += '```\n';
 					message.reply(msg)
 					break;
 				case 'quit':
