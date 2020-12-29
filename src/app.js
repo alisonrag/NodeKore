@@ -71,7 +71,7 @@ module.exports = class App {
 					let time = args[2];
 					(typeof time === 'undefined' || time === null) ? time = 600 : time = time;
 					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_RELOG', { ID: ID, time: time }));
-					message.reply(`Relog Command Sended Successfully to: ${ID}`);
+					message.reply(`Relog Command Sended Successfully to: ${ID} in ${time} seconds...`);
 					break;
 				case 'pm':
 					if (typeof args[2] === 'undefined' || args[2] === null || typeof args[3] === 'undefined' || args[3] === null) {
