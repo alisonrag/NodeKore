@@ -1,9 +1,9 @@
 module.exports = class App {
 
-    constructor (config) {
-        this.token = config.BOT_TOKEN;
-        this.prefix = config.BOT_PREFIX;
-        this.username = config.BOT_USERNAME;
+	constructor(config) {
+		this.token = config.BOT_TOKEN;
+		this.prefix = config.BOT_PREFIX;
+		this.username = config.BOT_USERNAME;
 		this.avatar = config.BOT_AVATAR;
 		this.channelID = config.BOT_CHANNEL;
 		this.host = config.SOCKET_HOST;
@@ -12,14 +12,14 @@ module.exports = class App {
 		this.bot_data = [];
 	}
 
-    run() {
-        this.setupDiscord();
-        this.setupSocketServer();
-    }
+	run() {
+		this.setupDiscord();
+		this.setupSocketServer();
+	}
 
-    setupDiscord() {
-        const Discord = require("discord.js");
-        this.client = new Discord.Client();
+	setupDiscord() {
+		const Discord = require("discord.js");
+		this.client = new Discord.Client();
 		this.client.login(this.token);
 		const prefix = this.prefix;
 		var that = this;
@@ -28,28 +28,28 @@ module.exports = class App {
 			console.log(`[discord] Logged in as ${this.client.user.tag}!`);
 		});
 
-        this.client.on("message", function (message) {
-            
-            if (message.author.bot) return;
-            if (!message.content.startsWith(prefix)) return;
+		this.client.on("message", function (message) {
 
-            const commandBody = message.content.slice(prefix.length);
-            const args = commandBody.trim().split(/ +/g);
+			if (message.author.bot) return;
+			if (!message.content.startsWith(prefix)) return;
+
+			const commandBody = message.content.slice(prefix.length);
+			const args = commandBody.trim().split(/ +/g);
 			const command = args[0].toLowerCase();
-			
+
 			let ID = args[1];
 			if (typeof ID === 'undefined' || ID === null) ID = "all";
 
 			let msg = "";
-            switch (command) {
-                case 'ping':
-                    const timeTaken = Date.now() - message.createdTimestamp;
-                    message.reply(`Pong! This message had a latency of ${timeTaken}ms.`);
+			switch (command) {
+				case 'ping':
+					const timeTaken = Date.now() - message.createdTimestamp;
+					message.reply(`Pong! This message had a latency of ${timeTaken}ms.`);
 					break;
 				case 'info':
 					let bot_data_list = that.getBotInfoList();
 
-					if (typeof bot_data_list === 'undefined' || bot_data_list === null ||  bot_data_list.length <= 0) {
+					if (typeof bot_data_list === 'undefined' || bot_data_list === null || bot_data_list.length <= 0) {
 						msg += "Sorry, there is no Bot data Avaliable";
 						message.reply(msg);
 						return;
@@ -79,7 +79,7 @@ module.exports = class App {
 						message.reply(`pm command error (from, to or message not defined)`);
 						return;
 					}
-					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_PM', { ID: ID, to: args[2], message: args[3] }));					
+					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_PM', { ID: ID, to: args[2], message: args[3] }));
 					message.reply(`PM Command Sended Successfully to: ${ID}`);
 					break;
 				case 'channel':
@@ -89,27 +89,27 @@ module.exports = class App {
 					file.BOT_CHANNEL = message.channel.id;
 
 					fs.writeFile('./conf/config.json', JSON.stringify(file, null, 4), function writeJSON(err) {
-						if (err) return console.log(err);					
+						if (err) return console.log(err);
 					});
-					
+
 					message.reply(`Current Channel ID is: ${message.channel.id} and is defined by default to send messages`);
-				break;
+					break;
 				case 'h':
 					msg = "```Usage: \n !channel: Show the ID and define the current channel as default to send messages\n !info : Show information about all connected bots. \n !quit <all/username/accountID> : Send Quit command to specific bot, if not defined send to all. \n !relog <all/username/accountID> <time>: Send relog command to specific bot, if not defined send to all. \n !pm <from/all> <to> <message>: Send PM command to bot. \n```";
 					message.reply(msg);
 					break;
-                default:
-                    message.reply(`Sorry, unknown command \`!${command}\``);
-            }
-        });  
-    }
+				default:
+					message.reply(`Sorry, unknown command \`!${command}\``);
+			}
+		});
+	}
 
 	setupSocketServer() {
 		const net = require('net');
 		const server = net.createServer();
 		const BusMessage = require("./Utils/BusMessage.js");
 		this.busMessage = new BusMessage();
-		
+
 		var current_id = 0;
 
 		server.listen(this.port, this.host, () => {
@@ -131,12 +131,12 @@ module.exports = class App {
 			socket.on('data', (data) => {
 				let message = JSON.parse(this.busMessage.unserialize(data));
 				let discord_message;
-				
+
 				if (message.info.accountID) {
 					this.addBotInfo(message);
 					//console.log(`[socket] Received ${message.MID} from ${message.info.accountID}:${message.info.name}`);
 				}
-	
+
 				switch (message.MID) {
 					case 'BOT_DISCORD_PM':
 						discord_message = `Received PM: \nFrom: \`${message.info.from}\` \t To: \`${message.info.to}\`\nMessage: \`${message.info.message}\`  `;
@@ -160,8 +160,8 @@ module.exports = class App {
 					default:
 						console.log(`[socket] Unknown MID received (${message.MID})`);
 				}
-				if (typeof discord_message === 'undefined' || discord_message === null ||  discord_message.length <= 0) return;
-				this.sendDiscordMessage(discord_message);			
+				if (typeof discord_message === 'undefined' || discord_message === null || discord_message.length <= 0) return;
+				this.sendDiscordMessage(discord_message);
 			})
 
 			socket.on('close', (data) => {
@@ -180,10 +180,10 @@ module.exports = class App {
 			})
 		})
 	}
-	
+
 	addBotInfo(message) {
 		for (let index = 0; index < this.bot_data.length; ++index) {
-			if(message.info.accountID == this.bot_data[index].accountID) {
+			if (message.info.accountID == this.bot_data[index].accountID) {
 				this.bot_data[index] = message.info;
 				return;
 			}
@@ -195,8 +195,16 @@ module.exports = class App {
 		return this.bot_data;
 	}
 
-	sendDiscordMessage(message) {		
-		this.client.channels.cache.get(this.channelID).send(message);
+	sendDiscordMessage(message) {
+		if (this.client) {
+			this.client.channels.fetch(this.channelID)
+				.then(channel => {
+					channel.send(message);
+				})
+				.catch(err => {
+					console.log(err.message);
+				})
+		}
 	}
 
 	sendOpenkoreMessage(message) {
