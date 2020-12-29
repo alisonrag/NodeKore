@@ -1,7 +1,7 @@
 #############################################################################
 # NodeKore by alisonrag
 # based in:
-# bus_discord plugin by sctnightcore
+# NodeKore plugin by sctnightcore
 #############################################################################
 package NodeKore;
 	
@@ -16,7 +16,7 @@ use Utils;
 use AI;
 
 # Plugin
-Plugins::register('bus_discord', "send and receive chat of discord via BUS", \&unload);
+Plugins::register('NodeKore', "send and receive chat of discord via BUS", \&unload);
 
 my $networkHook = Plugins::addHooks(
 	['Network::stateChanged',		\&init, undef],
@@ -35,7 +35,7 @@ sub init {
 	my ($self, $args) = @_;
 	return if ($::net->getState() == 1);
 	if (!$bus) {
-		die("\n\n[bus_discord] You MUST start BUS server and configure each bot to use it in order to use this plugin. Open and edit line \"bus 0\" to bus 1 inside control/sys.txt \n\n");
+		die("\n\n[NodeKore] You MUST start BUS server and configure each bot to use it in order to use this plugin. Open and edit line \"bus 0\" to bus 1 inside control/sys.txt \n\n");
 	} elsif (!$bus_message_received) {
 		$bus_message_received = $bus->onMessageReceived->add(undef, \&bus_message_received);
 	}
@@ -43,9 +43,9 @@ sub init {
 
 sub bus_message_received {
 	my (undef, undef, $msg) = @_;
-	
-	if( $msg->{args}->{ID} && ( $msg->{args}->{ID} eq "all" || $msg->{args}->{ID} eq $char->{name} || $msg->{args}->{ID} eq $accountID ) ) {
-		message sprintf("Received BUS message MID: %s  To: %s\n",$msg->{messageID}, $msg->{args}->{ID}), "bus";
+
+	if ( $msg->{args}->{ID} && ( $msg->{args}->{ID} eq "all" || $msg->{args}->{ID} eq $char->{name} || $msg->{args}->{ID} eq unpack('V',$accountID) ) ) {
+		message sprintf("[NodeKore] Received BUS message MID: %s  To: %s\n",$msg->{messageID}, $msg->{args}->{ID}), "bus";
 		if (($msg->{messageID} eq 'DISCORD_PM')) {
 			my $user = $msg->{args}->{to};
 			my $message = $msg->{args}->{message};
@@ -54,7 +54,7 @@ sub bus_message_received {
 
 		if (($msg->{messageID} eq 'DISCORD_RELOG')) {
 			my $time;
-			($msg->{args}->{time}) ? $time = $msg->{args}->{time} : $time = 600;
+			$time = ($msg->{args}->{time}) ? $msg->{args}->{time} : 600;
 			Commands::run("relog $time");
 		}
 
@@ -116,9 +116,11 @@ sub sendCharacterData {
 
 # Plugin unload
 sub unload {
-	message("\n[bus_discord] unloading.\n\n");
+	message "[NodeKore] unloading.\n", 'system';
 	Plugins::delHooks($networkHook);
 	$bus->onMessageReceived->remove($bus_message_received) if $bus_message_received;
+	undef $bus_message_received;
+	undef %bus_sendinfo_timeout;
 }
 	
 1;

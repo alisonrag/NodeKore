@@ -12,31 +12,31 @@
  Openkore and Discord Integration using Node.js
 
 ## Prerequisites
-1 - [Openkore](https://github.com/OpenKore/openkore)  
-2 - [Node.js](https://nodejs.org/en/)  
-3 - [Discord Bot](https://discord.com/developers/applications)  
-4 - A Discord Server where You and NodeKore are in the member list  
+1 - [Openkore](https://github.com/OpenKore/openkore)
+2 - [Node.js](https://nodejs.org/en/)
+3 - [Discord Bot](https://discord.com/developers/applications)
+4 - A Discord Server where You and NodeKore are in the member list
 
 ## Quickstart
-1 - Configure the file `conf/config.json`  
- - "BOT_TOKEN" = Discord Bot Token  
- - "BOT_CHANNEL" = Channel ID where bot will send the messages  
- 
+1 - Configure the file `conf/config.json`
+ - "BOT_TOKEN" = Discord Bot Token
+ - "BOT_CHANNEL" = Channel ID where bot will send the messages
+
 2 - Copy the plugin: [NodeKore](https://github.com/alisonrag/NodeKore/blob/main/plugin/NodeKore.pl) to openkore plugins folder  
 3 - Add the plugin to load list in `openkore/control/sys.txt`  
 4 - set `bus 1` and `bus_server_port 1234`in `openkore/control/sys.txt` (bus_server_port [sys.txt] must be equal to SOCKET_PORT[config.json])  
 5 - Open terminal and go to NodeKore root folder  
-6 - Type: `node index.js`  
+6 - Type: `node index.js`
 
 ## F.A.Q. (Frequently Asked Questions)
  1. **Where can i get the Channel ID?**
     - use command `!channel` in discord server channel
 
 ## Avaliable Commands
-`!info`: Show information about all connected bots.  
+`!info`: Show information about all connected bots.    
 `!quit`: <all/username/accountID> : Send Quit command to specific bot, if not defined send to all.  
-`!relog`: <all/username/accountID> <time>: Send relog command to specific bot, if not defined send to all.  
-`!pm`: <from/all> <to> <message>: Send PM command to bot.  
+`!relog`: <all/username/accountID> \<time> : Send relog command to specific bot, if not defined send to all.  
+`!pm`: <from/all> \<to> \<message> : Send PM command to bot.  
 `!channel`: Show the current Channel ID  
 `!h`: Show the Avaliable Commands
  
