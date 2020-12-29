@@ -12,9 +12,9 @@
  Openkore and Discord Integration using Node.js
 
 ## Prerequisites
-1 - [Openkore](https://github.com/OpenKore/openkore)
-2 - [Node.js](https://nodejs.org/en/)
-3 - [Discord Bot](https://discord.com/developers/applications)
+1 - [Openkore](https://github.com/OpenKore/openkore)  
+2 - [Node.js](https://nodejs.org/en/)  
+3 - [Discord Bot](https://discord.com/developers/applications)  
 4 - A Discord Server where You and NodeKore are in the member list
 
 ## Quickstart
