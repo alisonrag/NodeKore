@@ -65,13 +65,13 @@ module.exports = class App {
 					message.reply(msg)
 					break;
 				case 'quit':
-					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_QUIT', { ID: ID }));
+					that.broadcastOpenkoreMessage(that.busMessage.serialize('DISCORD_QUIT', { ID: ID }));
 					message.reply(`Quit Command Sended Successfully to: ${ID}`);
 					break;
 				case 'relog':
 					let time = args[2];
 					(typeof time === 'undefined' || time === null) ? time = 600 : time = time;
-					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_RELOG', { ID: ID, time: time }));
+					that.broadcastOpenkoreMessage(that.busMessage.serialize('DISCORD_RELOG', { ID: ID, time: time }));
 					message.reply(`Relog Command Sended Successfully to: ${ID} in ${time} seconds...`);
 					break;
 				case 'pm':
@@ -79,7 +79,7 @@ module.exports = class App {
 						message.reply(`pm command error (from, to or message not defined)`);
 						return;
 					}
-					that.sendOpenkoreMessage(that.busMessage.serialize('DISCORD_PM', { ID: ID, to: args[2], message: args[3] }));
+					that.broadcastOpenkoreMessage(that.busMessage.serialize('DISCORD_PM', { ID: ID, to: args[2], message: args[3] }));
 					message.reply(`PM Command Sended Successfully to: ${ID}`);
 					break;
 				case 'channel':
@@ -121,14 +121,17 @@ module.exports = class App {
 
 			console.log(`[socket] New client connected: ${varclientAddress} \t ID: ${current_id}`);
 
-			socket.current_id = current_id;
+			socket.ID = current_id;
+			socket.userAgent = "Unknown";
+			socket.name = "Unknown:" + socket.ID;
+			socket.state = 1;
 
-			socket.write(this.busMessage.serialize('HELLO', { yourID: socket.current_id }));
+			socket.write(this.busMessage.serialize('HELLO', { yourID: socket.ID }));
 
 			this.sockets.push(socket);
 			current_id++;
 
-			socket.on('data', (data) => {
+			socket.on('data', (data) => {				
 				let message = JSON.parse(this.busMessage.unserialize(data));
 				let discord_message;
 
@@ -156,9 +159,25 @@ module.exports = class App {
 						discord_message = `${message.info.accountID} : ${message.info.name} DISCONNECTED from server`;
 						break;
 					case 'HELLO':
+						let index = this.sockets.findIndex((o) => {
+							return o.remoteAddress === socket.remoteAddress && o.remotePort === socket.remotePort
+						});
+						if (index !== -1) {
+							if (this.sockets[index].state === 1) {
+								this.sockets[index].userAgent = (message.info.userAgent) ? message.info.userAgent : "Unknown";
+								this.sockets[index].privateOnly = (message.info.privateOnly) ? message.info.privateOnly : 0;
+								this.sockets[index].name = this.sockets[index].userAgent + ":" + this.sockets[index].ID;
+								this.sockets[index].state = 2;
+								this.broadcastOpenkoreMessage(this.busMessage.serialize('JOIN', { clientID : this.sockets[index].ID, name : this.sockets[index].name, userAgent : this.sockets[index].userAgent, host : this.sockets[index].remoteAddress }), this.sockets[index].ID );
+							} else {
+								console.log(`[socket] client ${this.sockets[index].ID} sent invalid HELLO.`);
+							}
+						}
 						break;
 					default:
-						console.log(`[socket] Unknown MID received (${message.MID})`);
+						console.log(`[socket] Unknown MID received (${message.MID}) broadcasting to all clients...`);
+						// default behavior on BUS server
+						this.broadcastOpenkoreMessage(data);
 				}
 				if (typeof discord_message === 'undefined' || discord_message === null || discord_message.length <= 0) return;
 				this.sendDiscordMessage(discord_message);
@@ -169,8 +188,11 @@ module.exports = class App {
 					return o.remoteAddress === socket.remoteAddress && o.remotePort === socket.remotePort
 				})
 				if (index !== -1) {
-					console.log(`[socket] client disconnect ${varclientAddress}`)
-					this.sockets.splice(index, 1)
+					console.log(`[socket] client disconnected ${varclientAddress} \t ID: ${this.sockets[index].ID }`);
+					if (this.sockets[index].state === 2) {
+						this.broadcastOpenkoreMessage(this.busMessage.serialize('LEAVE', { clientID: this.sockets[index].ID }));
+					}
+					this.sockets.splice(index, 1);
 				}
 
 			})
@@ -207,9 +229,12 @@ module.exports = class App {
 		}
 	}
 
-	sendOpenkoreMessage(message) {
+	broadcastOpenkoreMessage(message, exclude) {
+		let exclude_id = (exclude) ? exclude : -1;
 		this.sockets.forEach((client) => {
-			client.write(message);
+			if(exclude_id !== client.ID) {
+				client.write(message);
+			}
 		});
 	}
 }
