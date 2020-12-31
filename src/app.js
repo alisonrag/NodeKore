@@ -134,6 +134,7 @@ module.exports = class App {
 			socket.on('data', (data) => {				
 				let message = JSON.parse(this.busMessage.unserialize(data));
 				let discord_message;
+				let index = -1;
 
 				if (message.info.accountID) {
 					this.addBotInfo(message);
@@ -159,7 +160,7 @@ module.exports = class App {
 						discord_message = `${message.info.accountID} : ${message.info.name} DISCONNECTED from server`;
 						break;
 					case 'HELLO':
-						let index = this.sockets.findIndex((o) => {
+						index = this.sockets.findIndex((o) => {
 							return o.remoteAddress === socket.remoteAddress && o.remotePort === socket.remotePort
 						});
 						if (index !== -1) {
@@ -177,7 +178,13 @@ module.exports = class App {
 					default:
 						console.log(`[socket] Unknown MID received (${message.MID}) broadcasting to all clients...`);
 						// default behavior on BUS server
-						this.broadcastOpenkoreMessage(data);
+						index = this.sockets.findIndex((o) => {
+							return o.remoteAddress === socket.remoteAddress && o.remotePort === socket.remotePort
+						});
+						let exclude = -1;
+						if (index !== -1) exclude = this.sockets[index].ID;
+						this.broadcastOpenkoreMessage(data, exclude);
+						break;
 				}
 				if (typeof discord_message === 'undefined' || discord_message === null || discord_message.length <= 0) return;
 				this.sendDiscordMessage(discord_message);
@@ -230,7 +237,7 @@ module.exports = class App {
 	}
 
 	broadcastOpenkoreMessage(message, exclude) {
-		let exclude_id = (exclude) ? exclude : -1;
+		let exclude_id = (typeof exclude === 'undefined' || exclude === null) ? -1 : exclude;
 		this.sockets.forEach((client) => {
 			if(exclude_id !== client.ID) {
 				client.write(message);
