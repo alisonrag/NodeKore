@@ -5,13 +5,9 @@
   "main": "index.js",
   "author": "alisonrag",
   "scripts": {
-    "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "start": "node ."
   },
-  "devDependencies": {
-    "@types/node": "^8.0.14",
-    "typescript": "^3.2.2"
-  },
+  "devDependencies": {},
   "dependencies": {
     "discord.js": "^12.5.1",
     "fs": "^0.0.1-security",
