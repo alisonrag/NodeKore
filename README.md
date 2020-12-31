@@ -26,8 +26,9 @@
 3 - Add the plugin to load list in `openkore/control/sys.txt`  
 4 - set `bus 1` and `bus_server_port 1234`in `openkore/control/sys.txt` (bus_server_port [sys.txt] must be equal to SOCKET_PORT[config.json])  
 5 - Open terminal and go to NodeKore root folder  
-6 - Type: `node index.js`  
-7 - Go to the default Discord Server Channel and type `!channel` to define the channel as default
+6 - Type: `npm install`
+7 - Type: `node index.js`  
+8 - Go to the default Discord Server Channel and type `!channel` to define the channel as default
 
 ## F.A.Q. (Frequently Asked Questions)
  1. **Where can i get the Channel ID?**
